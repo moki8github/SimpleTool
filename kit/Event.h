@@ -7,6 +7,7 @@
 * @file Event.h
 * @brief event，the same as windows Event
 * helpful url:https://en.wikipedia.org/wiki/C%2B%2B11
+* http://www.cplusplus.com/reference/mutex/lock_guard/
 */
 #ifndef EVENT_HPP
 #define EVENT_HPP
@@ -46,7 +47,8 @@ public:
     */
     inline void reset_event()
     {
-        boost::mutex::scoped_lock autolock(mutex_);
+        //boost::mutex::scoped_lock autolock(mutex_);
+        std::lock_guard<std::mutex> lck (mutex_);
         state_ = false;
     }
 
@@ -70,8 +72,8 @@ public:
 private:
     bool state_;                         /**< 状态： true - 有信 false - 无信 */
     bool manual_reset_;                  /**< 复位方式： true - 手动 false - 自动 */
-    boost::mutex mutex_;                 /**< 操作互斥 */
-    boost::condition_variable_any cond_; /**< 条件变量 */
+    std::mutex mutex_;                 /**< 操作互斥 */
+    std::condition_variable_any cond_; /**< 条件变量 */
 };
 }
 
